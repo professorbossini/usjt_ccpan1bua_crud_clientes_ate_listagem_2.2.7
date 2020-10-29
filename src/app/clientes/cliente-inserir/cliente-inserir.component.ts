@@ -26,6 +26,7 @@ export class ClienteInserirComponent {
       form.value.fone,
       form.value.email
     );
+    form.resetForm();
     // const cliente: Cliente = {
     //   nome: form.value.nome,
     //   fone: form.value.fone,
