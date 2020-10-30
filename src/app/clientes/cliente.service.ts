@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http'
 
 import { Cliente } from './cliente.model';
 
@@ -9,12 +10,20 @@ import { Subject } from 'rxjs';
 })
 export class ClienteService {
 
-  constructor() { }
+  constructor(private httpClient : HttpClient) {
+
+  }
 
   private clientes: Cliente [] = [];
 
-  getClientes(): Cliente[] {
-    return [...this.clientes];
+  getClientes(): void {
+    this.httpClient.get<{mensagem : string, clientes: Cliente[]}>(
+      'http://localhost:3000/api/clientes'
+    ).subscribe((dados) => {
+      this.clientes = dados.clientes
+      this.listaClientesAtualizada.next([...this.clientes])
+    })
+    //return [...this.clientes];
   }
 
   private listaClientesAtualizada = new Subject <Cliente[]>();
@@ -25,8 +34,14 @@ export class ClienteService {
       fone: fone,
       email: email
     };
-    this.clientes.push(cliente);
-    this.listaClientesAtualizada.next([...this.clientes]);
+    this.httpClient.post<{mensagem: string}>(
+      'http://localhost:3000/api/clientes',
+      cliente
+    ).subscribe((dados) => {
+      console.log(dados.mensagem)
+      this.clientes.push(cliente);
+      this.listaClientesAtualizada.next([...this.clientes]);
+    })
   }
 
   getListaDeClientesAtualizadaObservable() {
