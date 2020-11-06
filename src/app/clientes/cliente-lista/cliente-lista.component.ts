@@ -26,7 +26,11 @@ export class ClienteListaComponent implements OnInit, OnDestroy {
       });
   }
 
+  onDelete (id: string){
+    this.clienteService.removerCliente(id);
+  }
+
   ngOnDestroy(): void {
-    this.clientesSubscription.unsubscribe();
+    this.clientesSubscription
   }
 }
