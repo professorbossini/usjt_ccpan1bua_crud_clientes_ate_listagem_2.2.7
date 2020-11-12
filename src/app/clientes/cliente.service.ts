@@ -18,6 +18,36 @@ export class ClienteService {
 
   }
 
+  adicionarCliente(nome: string, fone: string, email: string): void {
+    const cliente: Cliente = {
+      id: null,
+      nome: nome,
+      fone: fone,
+      email: email
+    };
+    this.httpClient.post<{ mensagem: string, id: string }>(
+      'http://localhost:3000/api/clientes',
+      cliente
+    ).subscribe((dados) => {
+      console.log(dados.mensagem)
+      cliente.id = dados.id;
+      this.clientes.push(cliente);
+      this.listaClientesAtualizada.next([...this.clientes]);
+    })
+  }
+
+  atualizarCliente(id: string, nome: string, fone: string, email: string) {
+    const cliente: Cliente = { id, nome, fone, email };
+    this.httpClient.put(`http://localhost:3000/api/clientes/${id}`, cliente)
+      .subscribe((res => {
+        const copia = [...this.clientes];
+        const indice = copia.findIndex(cli => cli.id === cliente.id);
+        copia[indice] = cliente;
+        this.clientes = copia;
+        this.listaClientesAtualizada.next([...this.clientes]);
+      }));
+  }
+
   removerCliente (id: string): void{
     this.httpClient.delete(`http://localhost:3000/api/clientes/${id}`)
     .subscribe(() => {
@@ -27,6 +57,14 @@ export class ClienteService {
       })
       this.listaClientesAtualizada.next([...this.clientes]);
     });
+  }
+
+  getCliente(idCliente: string) {
+    //return {...this.clientes.find((cli) => cli.id === idCliente)};
+    return this.httpClient.get<{
+      _id: string, nome: string, fone: string, email:
+        string
+    }>(`http://localhost:3000/api/clientes/${idCliente}`);
   }
 
   getClientes(): void {
@@ -48,26 +86,6 @@ export class ClienteService {
       this.listaClientesAtualizada.next([...this.clientes])
     })
     //return [...this.clientes];
-  }
-
-
-
-  adicionarCliente (nome: string, fone: string, email: string): void{
-    const cliente: Cliente = {
-      id: null,
-      nome: nome,
-      fone: fone,
-      email: email
-    };
-    this.httpClient.post<{mensagem: string, id: string}>(
-      'http://localhost:3000/api/clientes',
-      cliente
-    ).subscribe((dados) => {
-      console.log(dados.mensagem)
-      cliente.id = dados.id;
-      this.clientes.push(cliente);
-      this.listaClientesAtualizada.next([...this.clientes]);
-    })
   }
 
   getListaDeClientesAtualizadaObservable() {
