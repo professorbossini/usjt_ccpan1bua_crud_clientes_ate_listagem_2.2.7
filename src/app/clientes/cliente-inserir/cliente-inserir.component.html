@@ -1,30 +1,32 @@
 <mat-card>
-  <form (submit)="onSalvarCliente(clienteForm)" #clienteForm="ngForm">
+  <mat-spinner diameter="70" *ngIf="estaCarregando"></mat-spinner>
+  <form [formGroup]="form" (submit)="onSalvarCliente()" *ngIf="!estaCarregando">
     <mat-form-field>
       <input
         type="text"
         matInput
         placeholder="Digite seu nome"
         name="nome"
-        [ngModel]="cliente?.nome"
         required
+        formControlName="nome"
         minlength="3"
-        #nome="ngModel"
       />
-      <mat-error *ngIf="nome.invalid">Digite um nome válido</mat-error>
+      <mat-error *ngIf="form.get('nome').invalid">Digite um nome válido</mat-error>
     </mat-form-field>
-
+    <div>
+      <button (click)="selecionaArquivo.click()" mat-stroked-button type="button">Selecionar imagem</button>
+      <input type="file" #selecionaArquivo>
+    </div>
     <mat-form-field>
       <input
         type="text"
         matInput
         placeholder="fone"
         name="fone"
-        [ngModel]="cliente?.fone"
+        formControlName="fone"
         required
-        #fone="ngModel"
       />
-      <mat-error *ngIf="fone.invalid">Digite um telefone válido</mat-error>
+      <mat-error *ngIf="form.get('fone').invalid">Digite um telefone válido</mat-error>
     </mat-form-field>
 
     <mat-form-field>
@@ -33,11 +35,10 @@
         matInput
         placeholder="email"
         name="email"
-        [ngModel]="cliente?.email"
+        formControlName="email"
         required
-        #email="ngModel"
       />
-      <mat-error *ngIf="email.invalid">Digite um email válido</mat-error>
+      <mat-error *ngIf="form.get('email').invalid">Digite um email válido</mat-error>
     </mat-form-field>
 
     <button color="accent" mat-raised-button>
