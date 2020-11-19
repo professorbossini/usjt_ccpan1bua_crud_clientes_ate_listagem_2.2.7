@@ -1,6 +1,8 @@
+const path = require('path');
 const express = require ('express');
 const app = express();
 const bodyParser = require ('body-parser');
+app.use('/imagens', express.static(path.join("backend/imagens")));
 const mongoose = require ('mongoose');
 const clientesRoutes = require ('./rotas/clientes');
 mongoose.connect('mongodb+srv://usjt-ccp1an-bua:usjt-ccp1an-bua@cluster0.ssm0w.mongodb.net/usjt-clientes?retryWrites=true&w=majority')

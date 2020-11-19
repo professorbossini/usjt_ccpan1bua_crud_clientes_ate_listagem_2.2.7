@@ -21,19 +21,30 @@ export class ClienteService {
 
   }
 
-  adicionarCliente(nome: string, fone: string, email: string): void {
-    const cliente: Cliente = {
+  adicionarCliente(nome: string, fone: string, email: string, imagem: File): void {
+    /* cliente: Cliente = {
       id: null,
       nome: nome,
       fone: fone,
       email: email
-    };
-    this.httpClient.post<{ mensagem: string, id: string }>(
+    };*/
+    const dadosCliente = new FormData();
+    dadosCliente.append("nome", nome);
+    dadosCliente.append('fone', fone);
+    dadosCliente.append('email', email);
+    dadosCliente.append('imagem', imagem);
+    this.httpClient.post < { mensagem: string, cliente: Cliente }>(
       'http://localhost:3000/api/clientes',
-      cliente
+      dadosCliente
     ).subscribe((dados) => {
-      console.log(dados.mensagem)
-      cliente.id = dados.id;
+      const cliente: Cliente = {
+        id: dados.cliente.id,
+        nome: nome,
+        fone: fone,
+        email: email,
+        imagemURL: dados.cliente.imagemURL
+      };
+      console.log(cliente);
       this.clientes.push(cliente);
       this.listaClientesAtualizada.next([...this.clientes]);
       this.router.navigate(['/']);
@@ -41,7 +52,7 @@ export class ClienteService {
   }
 
   atualizarCliente(id: string, nome: string, fone: string, email: string) {
-    const cliente: Cliente = { id, nome, fone, email };
+    const cliente: Cliente = { id, nome, fone, email, imagemURL: null };
     this.httpClient.put(`http://localhost:3000/api/clientes/${id}`, cliente)
       .subscribe((res => {
         const copia = [...this.clientes];
@@ -83,7 +94,8 @@ export class ClienteService {
           id: cli._id,
           nome: cli.nome,
           fone: cli.fone,
-          email: cli.email
+          email: cli.email,
+          imagemURL: cli.imagemURL
         }
       })
     }))
